@@ -27,4 +27,3 @@ print(f"Trovati {len(invalid_files)} file non validi.")
 for path in invalid_files:
     print(path)
 
-# Qui puoi decidere se rimuovere i file non validi dal filesystem o gestirli in altro modo

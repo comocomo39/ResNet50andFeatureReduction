@@ -1,3 +1,4 @@
+import joblib
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
@@ -24,18 +25,21 @@ y_test_encoded = label_encoder.transform(y_test)  # Usa lo stesso encoder per ma
 
 # Inizializza i modelli
 models = {
-    "SVM": SVC(kernel='linear'),
-    "Random Forest": RandomForestClassifier(n_estimators=100),
-    "Gradient Boosting": GradientBoostingClassifier(n_estimators=100)
+    "SVM": SVC(kernel='linear')
+    #"Random Forest": RandomForestClassifier(n_estimators=100),
+    #"Gradient Boosting": GradientBoostingClassifier(n_estimators=100)
 }
 
-# Addestra i modelli e valuta le performance
+# Nel loop di previsione dei modelli
 for name, model in models.items():
     model.fit(X_train, y_train_encoded)
     y_pred = model.predict(X_test)
+
+    # Inverti la codifica numerica per ottenere i nomi originali delle classi
+    y_pred_original = label_encoder.inverse_transform(y_pred)
+
     print(f"Performance of {name}:")
     print(f"Accuracy: {accuracy_score(y_test_encoded, y_pred)}")
-    # Aggiornamento qui per assicurarsi che i nomi delle classi siano stringhe
     print(classification_report(y_test_encoded, y_pred, target_names=[str(cls) for cls in label_encoder.classes_]))
     print("\n")
-
+    joblib.dump(model, f"{name}_model.pkl")

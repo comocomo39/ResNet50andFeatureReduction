@@ -8,52 +8,37 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 
-data_dir = 'C:/Users/casac/Desktop/funghi/'
+data_dir = 'C:/Users/casac/Desktop/mushrooms/funghi/'
 
 # Dimensioni desiderate delle immagini
 image_size = (224, 224)
 
 # Funzione per il preprocessing delle immagini
 def preprocess_images(image):
-    image_resized = resize(image, image_size)
+    # Calcola le dimensioni dell'immagine
+    shape = tf.shape(image)
+    height, width = shape[0], shape[1]
+
+    # Trova la dimensione minore tra altezza e larghezza
+    min_dim = tf.minimum(height, width)
+
+    # Calcola l'offset per il ritaglio al centro
+    offset_height = (height - min_dim) // 2
+    offset_width = (width - min_dim) // 2
+
+    # Ritaglia l'immagine per renderla quadrata
+    image_cropped = tf.image.crop_to_bounding_box(image, offset_height, offset_width, min_dim, min_dim)
+
+    # Ridimensiona l'immagine a 224x224
+    image_resized = tf.image.resize(image_cropped, image_size, method=tf.image.ResizeMethod.BILINEAR)
+
+    # Applica il preprocessing specifico per il modello
     return preprocess_input(image_resized)
 
 # Data generator con preprocessing_function per preprocessare le immagini
 datagen = ImageDataGenerator(
     preprocessing_function=preprocess_images,
     validation_split=0.2)
-
-from PIL import Image
-import os
-
-# Percorso alla directory contenente le immagini
-data_dir = 'C:/Users/casac/Desktop/funghi/'
-
-# Lista per tenere traccia dei file problematici
-invalid_files = []
-
-# Esamina tutti i file nelle sottodirectory di data_dir
-for subdir, dirs, files in os.walk(data_dir):
-    for file in files:
-        file_path = os.path.join(subdir, file)
-        try:
-            # Tenta di aprire l'immagine
-            with Image.open(file_path) as img:
-                # Opzionalmente, puoi tentare di fare un'operazione sull'immagine per assicurarti che non sia corrotta
-                img.verify()
-        except (IOError, SyntaxError) as e:
-            print(f"File non valido: {file_path}")
-            invalid_files.append(file_path)
-
-# Stampa il numero di file non validi trovati
-print(f"Trovati {len(invalid_files)} file non validi.")
-
-# Opzionalmente, stampa i percorsi dei file non validi
-for path in invalid_files:
-    print(path)
-
-# Qui puoi decidere se rimuovere i file non validi dal filesystem o gestirli in altro modo
-
 
 batch_size = 32  # Puoi aggiustare questo in base alla memoria disponibile
 
@@ -89,7 +74,7 @@ model = Model(inputs=base_model.input, outputs=predictions)
 model.compile(optimizer=Adam(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 
 # Allena il modello
-model.fit(train_generator, epochs=10, validation_data=validation_generator)
+model.fit(train_generator, epochs=1, validation_data=validation_generator)
 
 # Crea un modello per l'estrazione delle features dal penultimo layer
 penultimate_layer_model = Model(inputs=model.input, outputs=model.layers[-2].output)
@@ -113,8 +98,8 @@ def extract_features_and_labels_with_class_names(generator, sample_count):
     return features, labels
 
 # Aggiornamento del numero di campioni per corrispondere al dataset
-num_train_samples = 70912  # Numero esatto di immagini di training
-num_validation_samples = 17726  # Numero esatto di immagini di validazione
+num_train_samples = 69903  # Numero esatto di immagini di training
+num_validation_samples = 17472  # Numero esatto di immagini di validazione
 
 # Estrazione delle features e delle labels aggiornate
 train_features, train_labels = extract_features_and_labels_with_class_names(train_generator, num_train_samples)
@@ -126,6 +111,13 @@ def save_features_labels_to_csv(features, labels, file_name):
     labels_df = pd.DataFrame(labels, columns=['label'])
     data_df = pd.concat([features_df, labels_df], axis=1)
     data_df.to_csv(file_name, index=False)
+
+# Crea un nuovo modello utilizzando solo il penultimo layer come output
+feature_extraction_model = Model(inputs=model.input, outputs=model.layers[-2].output)
+
+# Salva solo il modello per l'estrazione delle features
+feature_extraction_model.save("C:/Users/casac/Desktop/mushrooms/feature_extraction_model.h5")
+
 
 # Salvataggio dei dati estratti in file CSV
 save_features_labels_to_csv(train_features, train_labels, 'train_features_labels.csv')
