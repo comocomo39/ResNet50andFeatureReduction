@@ -1,5 +1,6 @@
 import numpy as np
 import joblib
+import matplotlib.pyplot as plt
 from tensorflow.keras.models import load_model
 from tkinter import Tk, Button, Label, filedialog
 from PIL import Image, ImageTk
@@ -11,6 +12,16 @@ feature_extraction_model = load_model("C:/Users/casac/Desktop/mushrooms/feature_
 
 # Carica il modello SVM addestrato
 svm_model = joblib.load("SVM_model.pkl")
+
+coef = svm_model.coef_[0]
+
+importance = np.abs(coef)
+
+plt.bar(range(len(importance)), importance)
+plt.xlabel('Indice della Caratteristica')
+plt.ylabel('Importanza (Valore Assoluto dei Coefficienti)')
+plt.title('Importanza delle Caratteristiche in un Modello SVM Lineare')
+plt.show()
 
 def classify_image(image_path):
     # Carica e preprocessa l'immagine
@@ -35,6 +46,7 @@ def update_ui_with_image(image_path):
     image_label.config(image=img_tk)
     image_label.image = img_tk
     prediction = classify_image(image_path)
+
     result_label.config(text=f"Risultato della classificazione: {prediction}")
 
 def select_and_classify_image():
