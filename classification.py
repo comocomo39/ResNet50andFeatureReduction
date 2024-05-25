@@ -2,9 +2,11 @@ import joblib
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
 from sklearn.svm import SVC
+import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # Carica i dati di training e validation
 train_data = pd.read_csv('train_features_labels.csv')
@@ -25,9 +27,10 @@ y_test_encoded = label_encoder.transform(y_test)  # Usa lo stesso encoder per ma
 
 # Inizializza i modelli
 models = {
-    "SVM": SVC(kernel='linear')
-    #"Random Forest": RandomForestClassifier(n_estimators=100),
-    #"Gradient Boosting": GradientBoostingClassifier(n_estimators=100)
+    "SVM": SVC(kernel='linear'),
+    "Random Forest": RandomForestClassifier(n_estimators=100),
+    "Gradient Boosting": GradientBoostingClassifier(n_estimators=100),
+    "AdaBoost": AdaBoostClassifier(n_estimators=100)
 }
 
 # Nel loop di previsione dei modelli
@@ -43,3 +46,6 @@ for name, model in models.items():
     print(classification_report(y_test_encoded, y_pred, target_names=[str(cls) for cls in label_encoder.classes_]))
     print("\n")
     joblib.dump(model, f"{name}_model.pkl")
+
+
+
