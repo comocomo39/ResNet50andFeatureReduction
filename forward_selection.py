@@ -8,8 +8,8 @@ from sklearn.metrics import accuracy_score, classification_report
 from mlxtend.feature_selection import SequentialFeatureSelector as SFS
 
 # Carica i dati di training e validation
-train_data = pd.read_csv('train_features_labels.csv')
-validation_data = pd.read_csv('validation_features_labels.csv')
+train_data = pd.read_csv('train_features_labels_new.csv')
+validation_data = pd.read_csv('validation_features_labels_new.csv')
 
 # Prepara i dati di training
 X_train = train_data.drop('label', axis=1).values
@@ -29,11 +29,11 @@ svm_model = SVC(kernel='linear')
 
 # Applica la forward selection
 sfs = SFS(svm_model,
-          k_features=1000,
+          k_features=50,
           forward=True,
           floating=False,
           scoring='accuracy',
-          cv=5)
+          cv=3)
 
 sfs = sfs.fit(X_train, y_train_encoded)
 

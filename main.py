@@ -74,7 +74,7 @@ model = Model(inputs=base_model.input, outputs=predictions)
 model.compile(optimizer=Adam(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 
 # Allena il modello
-model.fit(train_generator, epochs=1, validation_data=validation_generator)
+model.fit(train_generator, epochs=5, validation_data=validation_generator)
 
 # Crea un modello per l'estrazione delle features dal penultimo layer
 penultimate_layer_model = Model(inputs=model.input, outputs=model.layers[-2].output)
@@ -116,9 +116,9 @@ def save_features_labels_to_csv(features, labels, file_name):
 feature_extraction_model = Model(inputs=model.input, outputs=model.layers[-2].output)
 
 # Salva solo il modello per l'estrazione delle features
-feature_extraction_model.save("C:/Users/casac/Desktop/mushrooms/feature_extraction_model.h5")
+feature_extraction_model.save("C:/Users/casac/Desktop/mushrooms/feature_extraction_model_new.h5")
 
 
 # Salvataggio dei dati estratti in file CSV
-save_features_labels_to_csv(train_features, train_labels, 'train_features_labels.csv')
-save_features_labels_to_csv(validation_features, validation_labels, 'validation_features_labels.csv')
+save_features_labels_to_csv(train_features, train_labels, 'train_features_labels_new.csv')
+save_features_labels_to_csv(validation_features, validation_labels, 'validation_features_labels_new.csv')

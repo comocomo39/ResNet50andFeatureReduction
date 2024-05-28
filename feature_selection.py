@@ -33,8 +33,8 @@ plt.title('Importanza delle Prime 1000 Caratteristiche in un Modello SVM Lineare
 plt.show()
 
 # Carica i dati di training e validation
-train_data = pd.read_csv('train_features_labels.csv')
-validation_data = pd.read_csv('validation_features_labels.csv')
+train_data = pd.read_csv('train_features_labels_new.csv')
+validation_data = pd.read_csv('validation_features_labels_new.csv')
 
 # Prepara i dati di training
 X_train = train_data.drop('label', axis=1).values

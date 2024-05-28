@@ -7,8 +7,8 @@ from sklearn.metrics import accuracy_score, classification_report
 import joblib
 
 # Carica i dati di training e validation
-train_data = pd.read_csv('train_features_labels.csv')
-validation_data = pd.read_csv('validation_features_labels.csv')
+train_data = pd.read_csv('train_features_labels_new.csv')
+validation_data = pd.read_csv('validation_features_labels_new.csv')
 
 # Prepara i dati di training
 X_train = train_data.drop('label', axis=1).values
@@ -37,7 +37,7 @@ mi_df = mi_df.sort_values(by='MI', ascending=False)
 print(mi_df)
 
 # Seleziona le top N caratteristiche in base alla MI
-N = 500  # Numero di caratteristiche da selezionare
+N = 50  # Numero di caratteristiche da selezionare
 top_features = mi_df['Feature'].head(N).values
 X_train_selected = X_train_scaled[:, top_features]
 X_test_selected = X_test_scaled[:, top_features]
