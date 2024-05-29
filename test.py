@@ -10,13 +10,15 @@ from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.resnet50 import preprocess_input
 
 # Carica il modello per l'estrazione delle features
-feature_extraction_model = load_model("C:/Users/casac/Desktop/mushrooms/feature_extraction_model.h5")
+feature_extraction_model = load_model("feature_extraction_model_new.h5")
 
 # Carica il modello SVM addestrato
-svm_model = joblib.load("SVM_model.pkl")
+svm_model = joblib.load("SVM_model_mi_threshold.pkl")
+
+# Carica le caratteristiche selezionate da .npy
+selected_features = np.load('top_feature_indices.npy')
 
 coef = svm_model.coef_[0]
-
 importance = np.abs(coef)
 
 plt.bar(range(len(importance)), importance)
@@ -35,8 +37,11 @@ def classify_image(image_path):
     # Estrai le features dell'immagine utilizzando il modello per l'estrazione delle features
     features = feature_extraction_model.predict(img_array)
 
-    # Classifica le features estratte utilizzando il modello SVM
-    prediction = svm_model.predict(features)
+    # Seleziona solo le caratteristiche desiderate
+    features_selected = features[:, selected_features]
+
+    # Classifica le features selezionate utilizzando il modello SVM
+    prediction = svm_model.predict(features_selected)
 
     return prediction[0]
 
