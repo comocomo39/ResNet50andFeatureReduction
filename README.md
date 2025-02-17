@@ -1,5 +1,3 @@
-Ecco il README pronto per il copia e incolla:
-
 ```markdown
 # 🍄 Classificazione di Funghi con ResNet50 e Riduzione delle Feature
 
