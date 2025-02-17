@@ -1,4 +1,3 @@
-```markdown
 # 🍄 Classificazione di Funghi con ResNet50 e Riduzione delle Feature
 
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue) ![Deep Learning](https://img.shields.io/badge/Deep%20Learning-ResNet50-brightgreen) ![Feature Selection](https://img.shields.io/badge/Feature%20Selection-PCA%2C%20Mutual%20Information-orange)
